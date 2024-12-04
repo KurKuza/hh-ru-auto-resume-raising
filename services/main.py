@@ -109,13 +109,14 @@ class HHru:
             self.resume_src = dict()
             for resume in resumes:
                 title = resume.get("data-qa-title")
-                link = resume.select_one("a[data-sentry-element='Card']").get("href")
-                # link = resume.select_one("a[data-qa='resume-title-link']").get("href")
-                link = link.split("/")[-1].split("?")[0]
-                self.resume_src[title] = link
+                card = resume.select_one("a[data-qa^='resume-card-link-']")
+                if card:
+                    link = card.get("href").split("/")[-1].split("?")[0]
+                    self.resume_src[title] = link
+                else:
+                    print(f"No card found for resume: {title}")
             return True
-        else:
-            return False
+        return False
 
     async def add_resume_active(self, title: str, hour: int, minute: int) -> None:
         result = time.localtime(time.time())
